@@ -1,0 +1,183 @@
+\ProvidesPackage{main}
+
+\usepackage[english]{babel}
+
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+\usepackage{color}
+\usepackage{fancyvrb}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{ifdraft}
+\usepackage[iso,english,ngerman]{isodate}
+\usepackage{multicol}
+\usepackage{subcaption}
+\usepackage{tcolorbox}
+\usepackage{tikz}
+\usepackage{titlesec}
+\usepackage{underscore}
+\usepackage{xspace}
+
+\newfloat{agdacodefloat}{h}{auxagda}
+\floatname{agdacodefloat}{Agda listing}
+
+% \counterwithin{figure}{section}
+% \counterwithin{agdacodefloat}{section}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\renewcommand{\theagdacodefloat}{\arabic{section}.\arabic{agdacodefloat}}
+\newcommand{\sectionbreak}{\setcounter{figure}{0}\setcounter{agdacodefloat}{0}}
+
+\usetikzlibrary{matrix}
+\usetikzlibrary{arrows}
+\usetikzlibrary{calc}
+\tikzstyle{block} = [draw,rectangle,thick,minimum height=2em,minimum width=2em]
+\tikzstyle{branch} = [circle,inner sep=0pt,minimum size=1mm,fill=black,draw=black]
+\tikzstyle{connector} = [->,thick]
+\tikzstyle{line} = [thick]
+
+% Full reference using \ref and \nameref
+\newcommand{\fullref}[1]{\ref{#1}: \nameref{#1}}
+
+% Enable or disable colors
+% Assumes that \newif\ifsetmono has been executed
+\newcommand*{\ifmono}{%
+  \ifsetmono
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+
+\ifdraft{
+  \usepackage[notref,notcite]{showkeys}
+  \usepackage{everypage}
+  \AddEverypageHook{\makebox(0,0){\color{red}Draft \today}}
+
+  \newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO}: #1}\xspace}
+  \newcommand{\citationneeded}{\textsuperscript{\color{red}[citation needed]}\xspace}
+}{
+  \newcommand{\todo}[1]{}
+  \newcommand{\citationneeded}{}
+}
+
+%--------------------------------------------------
+% Agda
+
+\usepackage[conor]{agda}
+
+% Use these commands to format code (in thesis.fmt):
+\newcommand{\D}{}
+\newcommand{\V}{}
+\newcommand{\Vlight}{}
+\newcommand{\K}{}
+\newcommand{\agdacomment}{}
+\newcommand{\Hole}
+
+\newcommand{\DisableColors}{%
+  \renewcommand{\D}[1]{\textsf{##1}}% Types
+  \renewcommand{\V}[1]{\textsf{##1}}% Variables
+  \renewcommand{\Vlight}[1]{\textsf{##1}}%
+  \renewcommand{\K}[1]{\textsf{##1}}% Keywords
+  \renewcommand{\agdacomment}[1]{\mbox{-{}-##1}}%
+  \renewcommand{\Hole}[1]{\textsf{##1}}%
+}
+\newcommand{\EnableColors}{%
+  \renewcommand{\D}[1]{\textcolor[rgb]{\ifmono{0.15,0.15,0.15}{0,0,0.6}}{\textsf{##1}}}% Types
+  \renewcommand{\V}[1]{\textcolor[rgb]{\ifmono{0.15,0.15,0.15}{0,0,0.6}}{\textsf{##1}}}% Variables
+  \renewcommand{\Vlight}[1]{\textcolor[gray]{0.5}{\textsf{##1}}}%
+  \renewcommand{\K}[1]{\ifmono{\textcolor[gray]{0.2}{\textbf{\textsf{##1}}}}%
+    {\textcolor[rgb]{0.8,0.4,0}{\textsf{##1}}}}% Keywords
+  \renewcommand{\agdacomment}[1]{%
+    \mbox{\DisableColors\textcolor[rgb]{\ifmono{0,0,0}{0.6,0.15,0.15}}{-{}-##1}%
+      \EnableColors}}%
+  \renewcommand{\Hole}[1]{\colorbox[rgb]{\ifmono{0.8,0.8,0.8}{0.6,1,0.6}}{\textsf{##1}}}%
+}
+\EnableColors
+
+%--------------------------------------------------
+% Listings
+
+% Use array environment for hscode. Page breaks within code blocks are
+% not allowed.
+\arrayhs
+
+% Floated boxed listings can be made like this:
+%
+%   \begin{codelst}{Title}{reftitle}\begin{code}
+%   (code)
+%   \end{code}\end{codelst}
+%
+% We can not get rid of the \begin{code} and \end{code}, because
+% lhs2tex needs it. The colorboxed floatstyle is a copy of boxed, but
+% with a colored border and slightly more padding (from 3pt to 5pt).
+
+\newcommand{\lstboxcolor}{\color[gray]{0.7}}
+\newcommand\fs@colorboxed{%
+  \def\@fs@cfont{\bfseries}%
+  \let\@fs@capt\floatc@plain
+  \def\@fs@pre{\lstboxcolor\setbox\@currbox\vbox{\hbadness10000
+    \moveleft5.4pt\vbox{\advance\hsize by10.8pt
+      \hrule \hbox to\hsize{\vrule\kern5pt
+        \vbox{\kern5pt\box\@currbox\kern5pt}\kern5pt\vrule}\hrule}}}%
+  \def\@fs@mid{\kern2pt\color{black}}%
+  \def\@fs@post{}%
+  \let\@fs@iftopcapt\iffalse}
+\floatstyle{colorboxed}
+
+% Use colorboxed style for tables
+\restylefloat{table}
+
+% New floats for listings, numbered per chapter
+\newfloat{listing}{htbp}{ltg}
+\floatname{listing}{Listing}
+%\@addtoreset{listing}{chapter}
+%\renewcommand\thelisting{\thechapter.\arabic{listing}}
+\renewcommand\thelisting{\arabic{listing}}
+
+\newenvironment{codelst}[3][t]
+{\begin{listing}[#1]\texths\caption{#2}\label{lst:#3}\centering}
+{\end{listing}}
+
+%--------------------------------------------------
+% Fonts and text
+
+\ifxetex
+  \defaultfontfeatures{Mapping=tex-text}
+
+  \setmainfont[ItalicFont = xits-italic.otf
+  , BoldFont = xits-bold.otf
+  , BoldItalicFont = xits-bolditalic.otf]{xits-regular.otf}
+  \setmathfont[BoldFont = xits-mathbold.otf]{xits-math.otf}
+  \setsansfont[Scale=MatchUppercase]{PragmataPro_Mono_R_0827.ttf}
+  \setmonofont[Scale=MatchUppercase]{PragmataPro_Mono_R_0827.ttf}
+\fi
+
+% \newfontfamily\scshape[Letters=SmallCaps]{lmromancaps10-regular.otf}
+
+%--------------------------------------------------
+% Misc
+
+\newcommand{\header}[1]{\vspace*{1em}\noindent\textbf{#1}\nopagebreak}
+
+\definecolor{boxcolor}{gray}{0.9}
+\newcommand{\centerbox}[1]{%
+\begin{center}
+\setlength{\fboxrule}{5pt}\fcolorbox{boxcolor}{boxcolor}{\begin{minipage}{0.9\linewidth}
+#1
+\end{minipage}}
+\end{center}%
+}
+
+\newcommand{\Piware}{$Π$-Ware\xspace}
+\newcommand{\lambdaone}{$Λ₁$\xspace}
+\newcommand{\lambdapiware}{$λπ$-Ware\xspace}
+\newcommand{\term}[1]{\guillemotleft#1\guillemotright}
+
+\tcbset{left=0mm,right=0mm,boxsep=-2mm}
+
+
+\pretolerance=150
+\tolerance=550
+\setlength{\emergencystretch}{3em}
