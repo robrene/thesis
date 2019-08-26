@@ -12,7 +12,8 @@ TEX_MODULES=main \
             06-translation \
             07-correctness \
             08-conclusion \
-						09-special-thanks
+						09-special-thanks \
+						99-appendix
 
 .PHONY: clean
 
