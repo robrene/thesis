@@ -11,11 +11,21 @@
 
 \pagenumbering{gobble}
 
-\title{Verified Translation of a Strongly Typed Functional Language with Variables to a Language of Indexed Gates}
-\author{Rob Spoel}
-%\supervisor{Wouter Swierstra}
-\date{2019}
-\maketitle
+\begin{titlepage}
+	\centering
+  \vspace*{4cm}
+	{\scshape\LARGE Verified Translation of a Strongly Typed Functional Language with Variables to a Language of Indexed Gates\par}
+	\vspace{2\baselineskip}
+	{\large Rob Spoel\par}
+  \vspace{\baselineskip}
+  {\large 2019 \par}
+
+	\vfill
+
+	{\itshape\large Utrecht University\par}
+  \vspace{1.5\baselineskip}
+  {\itshape\large ICA-4158334\par}
+\end{titlepage}
 
 \tableofcontents
 \listoffigures
